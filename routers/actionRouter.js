@@ -85,35 +85,52 @@ router.post("/:id/actions", validateId, (req, res) => {
       });
     });
 });
+// router.put("/:id", validateId, (req, res) => {
+//   const makeChanges = { ...req.body, project_id: req.action.project_id };
+//   const id = req.params.id;
+//   console.log(makeChanges);
+//   actions
+//     .update(id, makeChanges)
+//     .then(action => {
+//       res.status(200).json({ message: "Update was successful." });
+//     })
+//     .catch(error =>
+//       res.status(500).json({ message: "Update was unsuccessful." })
+//     );
+// });
 
-router.put("/", validateId, (req, res) => {
-  const changes = { ...req.body, project_id: req.params.id };
+// router.put("/:id", validateId, (req, res) => {
+//   const changes = { ...req.body, project_id: req.actions.project_id };
+//   const { id } = req.params;
+//   actions
+//     .update(id, changes)
+//     .then(message => {
+//       res.status(210).json(message);
+//     })
+//     .catch(error => {
+//       console.log(error);
+//       res.status(500).json({
+//         message: "Error getting the action"
+//       });
+//     });
+// });
 
-  actions
-    .update(changes)
-    .then(message => {
-      res.status(210).json(message);
-    })
-    .catch(error => {
-      console.log(error);
-      res.status(500).json({
-        message: "Error getting the action"
-      });
-    });
-});
-
-router.put("/:id/actions", (req, res) => {
-  const changes = { ...req.body, project_id: req.actions.project_id };
+router.put("/:id", validateId, (req, res) => {
+  const changes = { ...req.body, project_id: req.project_id };
   actions
     .update(id, changes)
     .then(action => {
       if (!id) {
         res.status(404).json({
-          message: "The action with the specified ID does not exist."
+          message: "The action with the does not exist."
         });
-      } else if (!req.body.project_id || !req.body.description) {
+      } else if (
+        !req.body.project_id ||
+        !req.body.description ||
+        !req.body.notes
+      ) {
         res.status(400).json({
-          message: "Please provide project_id and description for the action."
+          message: "Please provide description for the action."
         });
       } else {
         res.status(200).json(action);
@@ -122,7 +139,7 @@ router.put("/:id/actions", (req, res) => {
     .catch(error => {
       console.log(error);
       res.status(500).json({
-        error: "The action information could not be modified."
+        error: "The action information could not be updated."
       });
     });
 });

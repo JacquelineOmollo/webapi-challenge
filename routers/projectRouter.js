@@ -1,10 +1,11 @@
 const express = require("express");
 
-const project = require("../data/helpers/projectModel");
+const projects = require("../data/helpers/projectModel");
 
 const router = express.Router();
+
 router.get("/", (req, res) => {
-  project
+  projects
     .get()
     .then(act => {
       res.status(200).json(act);
@@ -39,8 +40,8 @@ router.get("/:id", (req, res) => {
 router.post("/:id", (req, res) => {
   projects
     .insert(req.body)
-    .then(hub => {
-      res.status(201).json(hub);
+    .then(project => {
+      res.status(201).json(project);
     })
     .catch(error => {
       console.log(error);
@@ -55,8 +56,8 @@ router.post("/:id/projects", validateProId, (req, res) => {
   const project = req.body;
   projects
     .insert(id)
-    .then(message => {
-      res.status(201).json(message);
+    .then(project => {
+      res.status(201).json(project);
     })
     .catch(error => {
       console.log(error);
@@ -67,28 +68,29 @@ router.post("/:id/projects", validateProId, (req, res) => {
 });
 
 router.put("/:id", validateProId, (req, res) => {
-  const pro = req.body;
+  const project = req.body;
   console.log(req.project.id);
   console.log(project);
   if (Object.keys(project).length === 0) {
     return res.status(400).json({ message: "Enter description here" });
-  } else if (!req.body.description) {
-    return res.status(400).json({ message: "Add a description" });
   } else if (!req.body.name) {
     return res.status(400).json({ message: "Add a name" });
+  } else if (!req.body.description) {
+    return res.status(400).json({ message: "Add a description" });
   } else
     projects
-      .update(req.project.id, pro)
-      .then(pro => {
+      .update(req.project.id, project)
+      .then(project => {
         res.status(200).json({ message: "Project has been updated." });
       })
-      .catch(err => {
+      .catch(error => {
         res.status(500).json({ message: "Post has not been updated." });
       });
 });
 
 function validateProId(req, res, next) {
   const id = req.params.id;
-  project.get(id);
+  projects.get(id);
+  next();
 }
 module.exports = router;
